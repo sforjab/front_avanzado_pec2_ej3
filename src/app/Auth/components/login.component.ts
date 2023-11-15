@@ -5,16 +5,10 @@ import {
   UntypedFormGroup,
   Validators,
 } from '@angular/forms';
-import { Router } from '@angular/router';
 import { AuthDTO } from 'src/app/Auth/models/auth.dto';
-import { HeaderMenus } from 'src/app/Shared/Models/header-menus.dto';
-import { AuthService } from 'src/app/Auth/services/auth.service';
-import { HeaderMenusService } from 'src/app/Shared/Services/header-menus.service';
-import { LocalStorageService } from 'src/app/Shared/Services/local-storage.service';
-import { SharedService } from 'src/app/Shared/Services/shared.service';
-import { finalize } from 'rxjs/operators';
 import { AuthState } from '../reducers/auth.reducer';
 import { Store } from '@ngrx/store';
+import * as AuthActions from '../actions';
 
 @Component({
   selector: 'app-login',
@@ -22,21 +16,16 @@ import { Store } from '@ngrx/store';
   styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent implements OnInit {
-  loginUser: AuthDTO;
+  //loginUser: AuthDTO;
   email: UntypedFormControl;
   password: UntypedFormControl;
   loginForm: UntypedFormGroup;
 
   constructor(
     private formBuilder: UntypedFormBuilder,
-    private authService: AuthService,
-    private sharedService: SharedService,
-    private headerMenusService: HeaderMenusService,
-    private localStorageService: LocalStorageService,
-    private router: Router,
     private store: Store<AuthState>
   ) {
-    this.loginUser = new AuthDTO('', '', '', '');
+    //this.loginUser = new AuthDTO('', '', '', '');
 
     this.email = new UntypedFormControl('', [
       Validators.required,
@@ -58,7 +47,17 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {}
 
   login(): void {
-    let responseOK: boolean = false;
+    const credentials: AuthDTO = {
+      email: this.email.value,
+      password: this.password.value,
+      user_id: '',
+      access_token: ''
+    };
+
+    this.store.dispatch(AuthActions.login({ credentials }));
+
+
+    /* let responseOK: boolean = false;
     let errorResponse: any;
 
     this.loginUser.email = this.email.value;
@@ -107,6 +106,6 @@ export class LoginComponent implements OnInit {
         this.headerMenusService.headerManagement.next(headerInfo);
         this.sharedService.errorLog(error.error);
       }
-    );
+    ); */
   }
 }

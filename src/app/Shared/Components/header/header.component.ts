@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { Store } from '@ngrx/store';
 import { HeaderMenus } from 'src/app/Shared/Models/header-menus.dto';
 import { HeaderMenusService } from 'src/app/Shared/Services/header-menus.service';
-import { LocalStorageService } from 'src/app/Shared/Services/local-storage.service';
+import { logout } from '../../../Auth/actions';
 
 @Component({
   selector: 'app-header',
@@ -16,7 +17,7 @@ export class HeaderComponent implements OnInit {
   constructor(
     private router: Router,
     private headerMenusService: HeaderMenusService,
-    private localStorageService: LocalStorageService
+    private store: Store
   ) {
     this.showAuthSection = false;
     this.showNoAuthSection = true;
@@ -62,7 +63,7 @@ export class HeaderComponent implements OnInit {
   }
 
   logout(): void {
-    this.localStorageService.remove('user_id');
+    /* this.localStorageService.remove('user_id');
     this.localStorageService.remove('access_token');
 
     const headerInfo: HeaderMenus = {
@@ -70,8 +71,9 @@ export class HeaderComponent implements OnInit {
       showNoAuthSection: true,
     };
 
-    this.headerMenusService.headerManagement.next(headerInfo);
+    this.headerMenusService.headerManagement.next(headerInfo); */
 
+    this.store.dispatch(logout());
     this.router.navigateByUrl('home');
   }
 }

@@ -1,7 +1,6 @@
 import { Action, createReducer, on } from "@ngrx/store";
 import { AuthDTO } from "../models/auth.dto";
 import { login, loginFailure, loginSuccess, logout } from "../actions/auth.action";
-//Importar del actions las acciones
 
 export interface AuthState {
     credentials: AuthDTO;
