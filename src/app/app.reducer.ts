@@ -4,6 +4,7 @@ import * as AuthReducer from './Auth/reducers';
 import * as CategoriesReducer from './Category/reducers';
 import * as PostsReducer from './Post/reducers';
 import * as UserReducer from './User/reducers';
+import { AuthEffects } from './Auth/effects';
 
 export interface AppState {
     auth: AuthReducer.AuthState;

@@ -32,8 +32,8 @@ export class AuthEffects {
                         const credentialsTemp: AuthDTO = {
                             email: credentials.email,
                             password: credentials.password,
-                            user_id: credentials.user_id,
-                            access_token: credentials.access_token
+                            user_id: userToken.user_id,
+                            access_token: userToken.access_token
                         };
 
                         return AuthActions.loginSuccess({ credentials: credentialsTemp });

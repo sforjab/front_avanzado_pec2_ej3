@@ -2,6 +2,8 @@ import { NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ProfileComponent } from "./components/profile/profile.component";
 import { RegisterComponent } from "./components/register/register.component";
+import { HttpClientModule } from "@angular/common/http";
+import { ReactiveFormsModule } from "@angular/forms";
 
 @NgModule({
     declarations: [
@@ -9,7 +11,9 @@ import { RegisterComponent } from "./components/register/register.component";
         RegisterComponent
     ],
     imports: [
-        CommonModule
+        CommonModule,
+        ReactiveFormsModule,
+        HttpClientModule,
     ],
     exports: [
         ProfileComponent,
