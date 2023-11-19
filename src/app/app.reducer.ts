@@ -20,7 +20,7 @@ export const appReducers: ActionReducerMap<AppState> = {
     user: UserReducer.userReducer
 };
 
- export const EffectsArray: any = [
+ export const EffectsArray: any[] = [
     AuthEffects,
  /*   CategoriesEffects,
     PostsEffects,

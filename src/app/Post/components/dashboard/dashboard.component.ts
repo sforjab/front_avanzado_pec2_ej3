@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { Store } from '@ngrx/store';
 import { PostDTO } from 'src/app/Post/models/post.dto';
-import { PostService } from 'src/app/Post/services/post.service';
-import { SharedService } from 'src/app/Shared/Services/shared.service';
+import { AppState } from 'src/app/app.reducer';
+import * as PostsActions from '../../actions';
 
 @Component({
   selector: 'app-dashboard',
@@ -11,22 +12,37 @@ import { SharedService } from 'src/app/Shared/Services/shared.service';
 export class DashboardComponent implements OnInit {
   posts!: PostDTO[];
 
-  numLikes: number = 0;
-  numDislikes: number = 0;
+  numLikes!: number;
+  numDislikes!: number;
 
   constructor(
-    private postService: PostService,
-    private sharedService: SharedService
-  ) {}
+    private store: Store<AppState>
+  ) {
+    this.store.select('posts').subscribe((posts) => {
+      this.posts = posts.posts;
+      this.numLikes = 0;
+      this.numDislikes = 0;
 
-  ngOnInit(): void {
-    this.loadPosts();
+      this.posts.forEach((post) => {
+        this.numLikes = this.numLikes + post.num_likes;
+        this.numDislikes = this.numDislikes + post.num_dislikes;
+      });
+    });
   }
 
-  private loadPosts(): void {
-    let errorResponse: any;
+  ngOnInit(): void {
+    this.store.dispatch(PostsActions.getPosts());
+    /* this.loadPosts(); */
+  }
 
-    this.postService.getPosts().subscribe(
+ /*  private loadPosts(): void { */
+    /* let errorResponse: any; */
+
+    /* this.store.dispatch(
+      PostsActions.getPosts()
+    ); */
+
+    /* this.postService.getPosts().subscribe(
       (postsResult) => {
         this.posts = postsResult;
 
@@ -40,6 +56,6 @@ export class DashboardComponent implements OnInit {
         errorResponse = error.error;
         this.sharedService.errorLog(errorResponse);
       }
-    );
-  }
+    ); */
+  /* } */
 }

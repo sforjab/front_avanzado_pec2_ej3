@@ -1,6 +1,6 @@
 import { Action, createReducer, on } from "@ngrx/store";
 import { AuthDTO } from "../models/auth.dto";
-import * as AuthActions from "../actions/auth.action";
+import * as AuthActions from "../actions";
 
 export interface AuthState {
     credentials: AuthDTO;
@@ -40,6 +40,6 @@ const _authReducer = createReducer(
     on(AuthActions.logout, () => initialState)
 );
 
-export function authReducer(state: AuthState | undefined, action: Action) {
+export function authReducer(state: AuthState | undefined, action: Action): AuthState {
     return _authReducer(state, action);
 }

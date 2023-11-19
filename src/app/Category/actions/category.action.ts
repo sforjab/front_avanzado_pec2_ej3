@@ -4,7 +4,8 @@ import { HttpErrorResponse } from "@angular/common/http";
 
 // Obtener categorías por ID de usuario
 export const getCategoriesByUserId = createAction(
-    '[Categories List Page] Get Categories By User ID'
+    '[Categories List Page] Get Categories By User ID',
+    props<{ userId: string }>()
 );
 
 export const getCategoriesByUserIdSuccess = createAction(

@@ -38,13 +38,6 @@ import { environment } from 'src/environments/environment';
     })
 
   ],
-  providers: [ /* MIRAR LO DEL AUTHSERVICE, QUIZÁS EN SHARED */
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: AuthInterceptorService,
-      multi: true,
-    },
-  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

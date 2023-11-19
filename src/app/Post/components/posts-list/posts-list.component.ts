@@ -1,9 +1,9 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { PostDTO } from 'src/app/Post/models/post.dto';
-import { LocalStorageService } from 'src/app/Shared/Services/local-storage.service';
-import { PostService } from 'src/app/Post/services/post.service';
-import { SharedService } from 'src/app/Shared/Services/shared.service';
+import { Store } from '@ngrx/store';
+import { AppState } from 'src/app/app.reducer';
+import * as PostsActions from '../../actions';
 
 @Component({
   selector: 'app-posts-list',
@@ -11,21 +11,37 @@ import { SharedService } from 'src/app/Shared/Services/shared.service';
   styleUrls: ['./posts-list.component.scss'],
 })
 export class PostsListComponent {
-  posts!: PostDTO[];
+  posts: PostDTO[];
+  private userId: string;
+
   constructor(
-    private postService: PostService,
     private router: Router,
-    private localStorageService: LocalStorageService,
-    private sharedService: SharedService
+    private store: Store<AppState>
   ) {
+    this.userId = '';
+    this.posts = new Array<PostDTO>();
+    
+    this.store.select('auth').subscribe((auth) => {
+      if(auth.credentials.user_id) {
+        this.userId = auth.credentials.user_id;
+      }
+    });
+
+    this.store.select('posts').subscribe((posts) => {
+      this.posts = posts.posts;
+    });
+    
     this.loadPosts();
   }
 
   private loadPosts(): void {
-    let errorResponse: any;
-    const userId = this.localStorageService.get('user_id');
-    if (userId) {
-      this.postService.getPostsByUserId(userId).subscribe(
+    /* let errorResponse: any;
+    const userId = this.localStorageService.get('user_id'); */
+    if (this.userId) {
+      this.store.dispatch(
+        PostsActions.getPostsByUserId({ userId: this.userId })
+      );
+      /* this.postService.getPostsByUserId(userId).subscribe(
         (postsResult) => {
           this.posts = postsResult;
         },
@@ -33,7 +49,7 @@ export class PostsListComponent {
           errorResponse = error.error;
           this.sharedService.errorLog(errorResponse);
         }
-      );
+      ); */
     }
   }
 
@@ -46,12 +62,16 @@ export class PostsListComponent {
   }
 
   deletePost(postId: string): void {
-    let errorResponse: any;
+    //let errorResponse: any;
 
     // show confirmation popup
     let result = confirm('Confirm delete post with id: ' + postId + ' .');
     if (result) {
-      this.postService.deletePost(postId)
+      this.store.dispatch(
+        PostsActions.deletePost({ postId: postId })
+      );
+
+      /* this.postService.deletePost(postId)
       .subscribe(
         (rowsAffected) => {
           if (rowsAffected.affected > 0) {
@@ -62,7 +82,7 @@ export class PostsListComponent {
           errorResponse = error.error;
           this.sharedService.errorLog(errorResponse);
         }
-      );
+      ); */
     }
   }
 }

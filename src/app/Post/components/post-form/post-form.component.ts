@@ -10,10 +10,10 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { finalize } from 'rxjs/operators';
 import { CategoryDTO } from 'src/app/Category/models/category.dto';
 import { PostDTO } from 'src/app/Post/models/post.dto';
-import { CategoryService } from 'src/app/Category/services/category.service';
-import { LocalStorageService } from 'src/app/Shared/Services/local-storage.service';
-import { PostService } from 'src/app/Post/services/post.service';
-import { SharedService } from 'src/app/Shared/Services/shared.service';
+import { AppState } from 'src/app/app.reducer';
+import { Store } from '@ngrx/store';
+import * as PostsActions from '../../actions';
+import { getCategoriesByUserId } from '../../../Category/actions';
 
 @Component({
   selector: 'app-post-form',
@@ -21,6 +21,7 @@ import { SharedService } from 'src/app/Shared/Services/shared.service';
   styleUrls: ['./post-form.component.scss'],
 })
 export class PostFormComponent implements OnInit {
+  userId: string;
   post: PostDTO;
   title: UntypedFormControl;
   description: UntypedFormControl;
@@ -33,25 +34,33 @@ export class PostFormComponent implements OnInit {
   isValidForm: boolean | null;
 
   private isUpdateMode: boolean;
-  private validRequest: boolean;
+  /* private validRequest: boolean; */
   private postId: string | null;
 
   categoriesList!: CategoryDTO[];
 
   constructor(
     private activatedRoute: ActivatedRoute,
-    private postService: PostService,
+    /* private postService: PostService, */
     private formBuilder: UntypedFormBuilder,
     private router: Router,
-    private sharedService: SharedService,
-    private localStorageService: LocalStorageService,
-    private categoryService: CategoryService
+    private store: Store<AppState>
+    /* private sharedService: SharedService, */
+    /* private localStorageService: LocalStorageService, */
+    /* private categoryService: CategoryService */
   ) {
     this.isValidForm = null;
     this.postId = this.activatedRoute.snapshot.paramMap.get('id');
     this.post = new PostDTO('', '', 0, 0, new Date());
     this.isUpdateMode = false;
-    this.validRequest = false;
+
+    this.userId = '';
+    this.store.select('auth').subscribe((auth) => {
+      if(auth.credentials.user_id) {
+        this.userId = auth.credentials.user_id;
+      }
+    });
+    /* this.validRequest = false; */
 
     this.title = new UntypedFormControl(this.post.title, [
       Validators.required,
@@ -87,10 +96,14 @@ export class PostFormComponent implements OnInit {
   }
 
   private loadCategories(): void {
-    let errorResponse: any;
-    const userId = this.localStorageService.get('user_id');
-    if (userId) {
-      this.categoryService.getCategoriesByUserId(userId).subscribe(
+    /* let errorResponse: any;
+    const userId = this.localStorageService.get('user_id'); */
+    if (this.userId) {
+    //if (userId) {
+      this.store.dispatch(
+        getCategoriesByUserId({ userId: this.userId })
+      );
+      /* this.categoryService.getCategoriesByUserId(userId).subscribe(
         (categoriesResult) => {
           this.categoriesList = categoriesResult;
         },
@@ -98,17 +111,20 @@ export class PostFormComponent implements OnInit {
           errorResponse = error.error;
           this.sharedService.errorLog(errorResponse);
         }
-      );
+      ); */
     }
   }
 
   ngOnInit(): void {
-    let errorResponse: any;
+    //let errorResponse: any;
     // update
     if (this.postId) {
       this.isUpdateMode = true;
 
-      this.postService.getPostById(this.postId)
+      this.store.dispatch(
+        PostsActions.getPostById({ postId: this.postId })
+      );
+      /* this.postService.getPostById(this.postId)
       .subscribe(
         (postResult) => {
           this.post = postResult;
@@ -144,12 +160,20 @@ export class PostFormComponent implements OnInit {
           errorResponse = error.error;
           this.sharedService.errorLog(errorResponse);
         }
-      );
+      ); */
     }
   }
 
   private editPost(): void {
-    let errorResponse: any;
+    if(this.postId) {
+      if(this.userId) {
+        this.store.dispatch(
+          PostsActions.updatePost({ post: this.post })
+        );
+      }
+    }
+    
+    /* let errorResponse: any;
     let responseOK: boolean = false;
     if (this.postId) {
       const userId = this.localStorageService.get('user_id');
@@ -180,16 +204,22 @@ export class PostFormComponent implements OnInit {
           }
         );
       }
-    }
+    } */
   }
 
   private createPost(): void {
-    let errorResponse: any;
+    /* let errorResponse: any;
     let responseOK: boolean = false;
-    const userId = this.localStorageService.get('user_id');
-    if (userId) {
-      this.post.userId = userId;
-      this.postService.createPost(this.post)
+    const userId = this.localStorageService.get('user_id'); */
+    //if (userId) {
+    if(this.userId) {
+      //this.post.userId = userId;
+      this.post.userId = this.userId;
+
+      this.store.dispatch(
+        PostsActions.updatePost({ post: this.post })
+      );
+      /* this.postService.createPost(this.post)
       .pipe(
         finalize(async () => {
           await this.sharedService.managementToast(
@@ -211,7 +241,7 @@ export class PostFormComponent implements OnInit {
           errorResponse = error.error;
           this.sharedService.errorLog(errorResponse);
         }
-      );
+      ); */
     }
   }
 
