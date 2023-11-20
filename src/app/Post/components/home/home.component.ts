@@ -29,8 +29,11 @@ export class HomeComponent {
         this.userId = auth.credentials.user_id;
       }
     });
+    this.store.select('posts').subscribe((posts) => {
+      this.posts = posts.posts;
+    });
     this.showButtons = false;
-    this.loadPosts();
+    /* this.loadPosts(); */
   }
 
   ngOnInit(): void {
@@ -42,20 +45,27 @@ export class HomeComponent {
         }
       }
     ); */
-  }
-
-  private loadPosts(): void {
-    /* let errorResponse: any;
-    const userId = this.localStorageService.get('user_id'); */
-   /*  if (userId) { */
-   if(this.userId) {
+    if(this.userId) {
       this.showButtons = true;
     }
 
     this.store.dispatch(
       PostsActions.getPosts()
     );
+  }
 
+/*   private loadPosts(): void { */
+    /* let errorResponse: any;
+    const userId = this.localStorageService.get('user_id'); */
+   /*  if (userId) { */
+   /* if(this.userId) {
+      this.showButtons = true;
+    }
+
+    this.store.dispatch(
+      PostsActions.getPosts()
+    );
+ */
     /* this.postService.getPosts().subscribe(
       (postsResult) => {
         this.posts = postsResult;
@@ -65,7 +75,7 @@ export class HomeComponent {
         this.sharedService.errorLog(errorResponse);
       }
     ); */
-  }
+/*   } */
 
   like(postId: string): void {
     /* let errorResponse: any; */

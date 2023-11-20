@@ -38,10 +38,6 @@ export class DashboardComponent implements OnInit {
  /*  private loadPosts(): void { */
     /* let errorResponse: any; */
 
-    /* this.store.dispatch(
-      PostsActions.getPosts()
-    ); */
-
     /* this.postService.getPosts().subscribe(
       (postsResult) => {
         this.posts = postsResult;

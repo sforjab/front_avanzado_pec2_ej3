@@ -9,16 +9,15 @@ import { of } from "rxjs";
 
 @Injectable()
 export class AuthEffects {
-    private responseOK: boolean;
+    //private responseOK: boolean;
     private errorResponse: any;
 
     constructor(
         private actions$: Actions,
         private postService: PostService,
-        private router: Router,
         private sharedService: SharedService
     ) {
-        this.responseOK = false;
+        //this.responseOK = false;
     }
 
     getPosts$ = createEffect(() =>
@@ -49,5 +48,23 @@ export class AuthEffects {
             })
         ),
         { dispatch: false }
+    );
+
+    like$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(PostsActions.like),
+            exhaustMap(() =>//SEGUIR CON ESTO
+                this.postService.likePost(s).pipe(
+                    map((posts) => {
+                        return PostsActions.getPostsSuccess({
+                            posts: posts,
+                        });
+                    }),
+                    catchError((error) => {
+                        return of(PostsActions.getPostsFailure({ payload: error }));
+                    })
+                )
+            )
+        )
     );
 }
