@@ -11,7 +11,7 @@ import { PostModule } from './Post/post.module';
 import { UserModule } from './User/user.module';
 import { SharedModule } from './Shared/shared.module';
 import { StoreModule } from '@ngrx/store';
-import { appReducers } from './app.reducer';
+import { EffectsArray, appReducers } from './app.reducer';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from 'src/environments/environment';
@@ -31,7 +31,7 @@ import { environment } from 'src/environments/environment';
     UserModule,
     SharedModule,
     StoreModule.forRoot( appReducers ),
-    //EffectsModule.forRoot(EffectsArray),
+    EffectsModule.forRoot(EffectsArray),
     StoreDevtoolsModule.instrument({
       maxAge: 25,
       logOnly: environment.production

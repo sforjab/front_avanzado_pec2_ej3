@@ -16,11 +16,6 @@ export class HomeComponent {
   userId: string;
 
   constructor(
-    /* private postService: PostService,
-    private localStorageService: LocalStorageService,
-    private sharedService: SharedService,
-    private router: Router,
-    private headerMenusService: HeaderMenusService */
     private store: Store<AppState>
   ) {
     this.userId = '';
@@ -33,7 +28,6 @@ export class HomeComponent {
       this.posts = posts.posts;
     });
     this.showButtons = false;
-    /* this.loadPosts(); */
   }
 
   ngOnInit(): void {
@@ -54,60 +48,16 @@ export class HomeComponent {
     );
   }
 
-/*   private loadPosts(): void { */
-    /* let errorResponse: any;
-    const userId = this.localStorageService.get('user_id'); */
-   /*  if (userId) { */
-   /* if(this.userId) {
-      this.showButtons = true;
-    }
-
-    this.store.dispatch(
-      PostsActions.getPosts()
-    );
- */
-    /* this.postService.getPosts().subscribe(
-      (postsResult) => {
-        this.posts = postsResult;
-      },
-      (error) => {
-        errorResponse = error.error;
-        this.sharedService.errorLog(errorResponse);
-      }
-    ); */
-/*   } */
 
   like(postId: string): void {
-    /* let errorResponse: any; */
-
     this.store.dispatch(
       PostsActions.like({ postId: postId })
     );
-    /* this.postService.likePost(postId).subscribe(
-      () => {
-        this.loadPosts();
-      },
-      (error) => {
-        errorResponse = error.error;
-        this.sharedService.errorLog(errorResponse);
-      }
-    ); */
   }
 
-  dislike(postId: string): void {
-    /* let errorResponse: any; */
-    
+  dislike(postId: string): void {    
     this.store.dispatch(
       PostsActions.dislike({ postId: postId })
     );
-    /* this.postService.dislikePost(postId).subscribe(
-      () => {
-        this.loadPosts();
-      },
-      (error) => {
-        errorResponse = error.error;
-        this.sharedService.errorLog(errorResponse);
-      }
-    ); */
   }
 }

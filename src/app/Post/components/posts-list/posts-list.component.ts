@@ -35,21 +35,10 @@ export class PostsListComponent {
   }
 
   private loadPosts(): void {
-    /* let errorResponse: any;
-    const userId = this.localStorageService.get('user_id'); */
     if (this.userId) {
       this.store.dispatch(
         PostsActions.getPostsByUserId({ userId: this.userId })
       );
-      /* this.postService.getPostsByUserId(userId).subscribe(
-        (postsResult) => {
-          this.posts = postsResult;
-        },
-        (error) => {
-          errorResponse = error.error;
-          this.sharedService.errorLog(errorResponse);
-        }
-      ); */
     }
   }
 

@@ -5,6 +5,7 @@ import * as CategoriesReducer from './Category/reducers';
 import * as PostsReducer from './Post/reducers';
 import * as UserReducer from './User/reducers';
 import { AuthEffects } from './Auth/effects';
+import { PostsEffects } from './Post/effects';
 
 export interface AppState {
     auth: AuthReducer.AuthState;
@@ -22,7 +23,7 @@ export const appReducers: ActionReducerMap<AppState> = {
 
  export const EffectsArray: any[] = [
     AuthEffects,
- /*   CategoriesEffects,
+ /*   CategoriesEffects,*/
     PostsEffects,
-    UserEffects*/
+    /* UserEffects */
 ]; 

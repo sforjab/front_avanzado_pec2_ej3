@@ -8,7 +8,7 @@ import * as PostsActions from '../actions';
 import { of } from "rxjs";
 
 @Injectable()
-export class AuthEffects {
+export class PostsEffects {
     //private responseOK: boolean;
     private errorResponse: any;
 
@@ -53,18 +53,86 @@ export class AuthEffects {
     like$ = createEffect(() =>
         this.actions$.pipe(
             ofType(PostsActions.like),
-            exhaustMap(() =>//SEGUIR CON ESTO
-                this.postService.likePost(s).pipe(
-                    map((posts) => {
-                        return PostsActions.getPostsSuccess({
-                            posts: posts,
-                        });
+            exhaustMap((action) =>
+                this.postService.likePost(action.postId).pipe(
+                    map(() => {
+                        return PostsActions.likeSuccess();
                     }),
                     catchError((error) => {
-                        return of(PostsActions.getPostsFailure({ payload: error }));
+                        return of(PostsActions.likeFailure({ payload: error }));
                     })
                 )
             )
         )
+    );
+
+    likeFailure$ = createEffect(
+        () =>
+        this.actions$.pipe(
+            ofType(PostsActions.likeFailure),
+            map((error) => {
+                this.errorResponse = error.payload.error;
+                this.sharedService.errorLog(error.payload.error);
+            })
+        ),
+        { dispatch: false }
+    );
+
+    dislike$ = createEffect(() =>
+        this.actions$.pipe(
+            ofType(PostsActions.dislike),
+            exhaustMap((action) =>
+                this.postService.dislikePost(action.postId).pipe(
+                    map(() => {
+                        return PostsActions.dislikeSuccess();
+                    }),
+                    catchError((error) => {
+                        return of(PostsActions.dislikeFailure({ payload: error }));
+                    })
+                )
+            )
+        )
+    );
+
+    dislikeFailure$ = createEffect(
+        () =>
+        this.actions$.pipe(
+            ofType(PostsActions.dislikeFailure),
+            map((error) => {
+                this.errorResponse = error.payload.error;
+                this.sharedService.errorLog(error.payload.error);
+            })
+        ),
+        { dispatch: false }
+    );
+
+    getPostsByUserId$ = createEffect(() => 
+        this.actions$.pipe(
+            ofType(PostsActions.getPostsByUserId),
+            exhaustMap((action) => 
+                this.postService.getPostsByUserId(action.userId).pipe(
+                    map((posts) => {
+                        return PostsActions.getPostsByUserIdSuccess({
+                            posts: posts
+                        });
+                    }),
+                    catchError((error) => {
+                        return of(PostsActions.getPostsByUserIdFailure({ payload: error }));
+                    })
+                )
+            )
+        )
+    );
+
+    getPostsByUserIdFailure$ = createEffect(
+        () =>
+        this.actions$.pipe(
+            ofType(PostsActions.getPostsByUserIdFailure),
+            map((error) => {
+                this.errorResponse = error.payload.error;
+                this.sharedService.errorLog(error.payload.error);
+            })
+        ),
+        { dispatch: false }
     );
 }
