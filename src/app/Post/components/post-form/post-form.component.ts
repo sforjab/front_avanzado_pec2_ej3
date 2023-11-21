@@ -48,6 +48,7 @@ export class PostFormComponent implements OnInit {
     this.isValidForm = null;
     this.postId = this.activatedRoute.snapshot.paramMap.get('id');
     this.post = new PostDTO('', '', 0, 0, new Date());
+    this.categoriesList = [];
     this.isUpdateMode = false;
 
     /* this.validRequest = false; */
@@ -79,8 +80,39 @@ export class PostFormComponent implements OnInit {
       }
     });
 
-    this.categoriesList = [];
+    this.store.select('categories').subscribe((categories) => {
+      this.categoriesList = categories.categories;
+    });
 
+    this.store.select('posts').subscribe((post) => { // MIRAR SI ESTO ES REDUNDANTE (LA LÓGICA)
+      this.post = post.post;
+      this.title.setValue(this.post.title);
+
+          this.description.setValue(this.post.description);
+
+          this.publication_date.setValue(
+            formatDate(this.post.publication_date, 'yyyy-MM-dd', 'en')
+          );
+
+          let categoriesIds: string[] = [];
+          this.post.categories.forEach((cat: CategoryDTO) => {
+            categoriesIds.push(cat.categoryId);
+          });
+
+          this.categories.setValue(categoriesIds);
+
+          this.num_likes.setValue(this.post.num_likes);
+          this.num_dislikes.setValue(this.post.num_dislikes);
+
+          this.postForm = this.formBuilder.group({
+            title: this.title,
+            description: this.description,
+            publication_date: this.publication_date,
+            categories: this.categories,
+            num_likes: this.num_likes,
+            num_dislikes: this.num_dislikes,
+          });
+    });
     // get categories by user and load multi select
     /* this.loadCategories(); */
 
@@ -115,17 +147,12 @@ export class PostFormComponent implements OnInit {
   } */
 
   ngOnInit(): void {
-    //let errorResponse: any;
     // update
     if (this.userId) {
       this.store.dispatch(
-        getCategoriesByUserId({ userId: this.userId })
+        getCategoriesByUserId({ userId: this.userId }) // HACER EFFECT
       );
     }
-
-    this.store.select('categories').subscribe((categories) => {
-      this.categoriesList = categories.categories;
-    });
 
     if (this.postId) {
       this.isUpdateMode = true;
@@ -133,43 +160,6 @@ export class PostFormComponent implements OnInit {
       this.store.dispatch(
         PostsActions.getPostById({ postId: this.postId })
       );
-      /* this.postService.getPostById(this.postId)
-      .subscribe(
-        (postResult) => {
-          this.post = postResult;
-
-          this.title.setValue(this.post.title);
-
-          this.description.setValue(this.post.description);
-
-          this.publication_date.setValue(
-            formatDate(this.post.publication_date, 'yyyy-MM-dd', 'en')
-          );
-
-          let categoriesIds: string[] = [];
-          this.post.categories.forEach((cat: CategoryDTO) => {
-            categoriesIds.push(cat.categoryId);
-          });
-
-          this.categories.setValue(categoriesIds);
-
-          this.num_likes.setValue(this.post.num_likes);
-          this.num_dislikes.setValue(this.post.num_dislikes);
-
-          this.postForm = this.formBuilder.group({
-            title: this.title,
-            description: this.description,
-            publication_date: this.publication_date,
-            categories: this.categories,
-            num_likes: this.num_likes,
-            num_dislikes: this.num_dislikes,
-          });
-        },
-        (error) => {
-          errorResponse = error.error;
-          this.sharedService.errorLog(errorResponse);
-        }
-      ); */
     }
   }
 
@@ -177,80 +167,19 @@ export class PostFormComponent implements OnInit {
     if(this.postId) {
       if(this.userId) {
         this.store.dispatch(
-          PostsActions.updatePost({ post: this.post })
+          PostsActions.updatePost({ postId: this.postId, post: this.post })
         );
       }
     }
-    
-    /* let errorResponse: any;
-    let responseOK: boolean = false;
-    if (this.postId) {
-      const userId = this.localStorageService.get('user_id');
-      if (userId) {
-        this.post.userId = userId;
-
-        this.postService.updatePost(this.postId, this.post)
-        .pipe(
-          finalize(async () => {
-            await this.sharedService.managementToast(
-              'postFeedback',
-              responseOK,
-              errorResponse
-            );
-      
-            if (responseOK) {
-              this.router.navigateByUrl('posts');
-            }
-          })
-        )
-        .subscribe(
-          () => {
-            responseOK = true;
-          },
-          (error) => {
-            errorResponse = error.error;
-            this.sharedService.errorLog(errorResponse);
-          }
-        );
-      }
-    } */
   }
 
   private createPost(): void {
-    /* let errorResponse: any;
-    let responseOK: boolean = false;
-    const userId = this.localStorageService.get('user_id'); */
-    //if (userId) {
     if(this.userId) {
-      //this.post.userId = userId;
       this.post.userId = this.userId;
 
       this.store.dispatch(
-        PostsActions.updatePost({ post: this.post })
+        PostsActions.createPost({ post: this.post })
       );
-      /* this.postService.createPost(this.post)
-      .pipe(
-        finalize(async () => {
-          await this.sharedService.managementToast(
-            'postFeedback',
-            responseOK,
-            errorResponse
-          );
-    
-          if (responseOK) {
-            this.router.navigateByUrl('posts');
-          }
-        })
-      )
-      .subscribe(
-        () => {
-          responseOK = true;
-        },
-        (error) => {
-          errorResponse = error.error;
-          this.sharedService.errorLog(errorResponse);
-        }
-      ); */
     }
   }
 
@@ -271,4 +200,3 @@ export class PostFormComponent implements OnInit {
     }
   }
 }
-// TENGO QUE ESCUCHAR EL POST

@@ -60,7 +60,7 @@ export const getPostByIdFailure = createAction(
 // Actualizar una publicación
 export const updatePost = createAction(
     '[Post Form Page] Update Post',
-    props<{ post: PostDTO }>()
+    props<{ postId: string, post: PostDTO }>()
 );
 
 export const updatePostSuccess = createAction(

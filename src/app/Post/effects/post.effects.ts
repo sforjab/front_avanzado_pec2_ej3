@@ -3,21 +3,22 @@ import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { PostService } from "../services/post.service";
 import { Router } from "@angular/router";
 import { SharedService } from "src/app/Shared/Services/shared.service";
-import { catchError, exhaustMap, map } from "rxjs/operators";
+import { catchError, exhaustMap, finalize, map } from "rxjs/operators";
 import * as PostsActions from '../actions';
 import { of } from "rxjs";
 
 @Injectable()
 export class PostsEffects {
-    //private responseOK: boolean;
+    private responseOK: boolean;
     private errorResponse: any;
 
     constructor(
         private actions$: Actions,
         private postService: PostService,
-        private sharedService: SharedService
+        private sharedService: SharedService,
+        private router: Router
     ) {
-        //this.responseOK = false;
+        this.responseOK = false;
     }
 
     getPosts$ = createEffect(
@@ -50,6 +51,69 @@ export class PostsEffects {
         ),
         { dispatch: false }
     );
+
+    getPostById$ = createEffect(
+        () =>
+        this.actions$.pipe(
+            ofType(PostsActions.getPostById),
+            exhaustMap((action) => 
+                this.postService.getPostById(action.postId).pipe(
+                    map((post) => {
+                        return PostsActions.getPostByIdSuccess({
+                            post: post
+                        });
+                    }),
+                    catchError((error) => {
+                        return of(PostsActions.getPostByIdFailure({ payload: error }))
+                    })
+                )
+            )
+        )
+    );
+
+    getPostByIdFailure$ = createEffect(
+        () =>
+        this.actions$.pipe(
+            ofType(PostsActions.getPostByIdFailure),
+            map((error) => {
+                this.errorResponse = error.payload.error;
+                this.sharedService.errorLog(error.payload.error);
+            })
+        ),
+        { dispatch: false }
+    );
+
+    getPostsByUserId$ = createEffect(
+        () => 
+        this.actions$.pipe(
+            ofType(PostsActions.getPostsByUserId),
+            exhaustMap((action) => 
+                this.postService.getPostsByUserId(action.userId).pipe(
+                    map((posts) => {
+                        return PostsActions.getPostsByUserIdSuccess({
+                            posts: posts
+                        });
+                    }),
+                    catchError((error) => {
+                        return of(PostsActions.getPostsByUserIdFailure({ payload: error }));
+                    })
+                )
+            )
+        )
+    );
+
+    getPostsByUserIdFailure$ = createEffect(
+        () =>
+        this.actions$.pipe(
+            ofType(PostsActions.getPostsByUserIdFailure),
+            map((error) => {
+                this.errorResponse = error.payload.error;
+                this.sharedService.errorLog(error.payload.error);
+            })
+        ),
+        { dispatch: false }
+    );
+
 
     like$ = createEffect(() =>
         this.actions$.pipe(
@@ -108,34 +172,109 @@ export class PostsEffects {
         { dispatch: false }
     );
 
-    getPostsByUserId$ = createEffect(
-        () => 
+    editPost$ = createEffect(
+        () =>
         this.actions$.pipe(
-            ofType(PostsActions.getPostsByUserId),
+            ofType(PostsActions.updatePost),
             exhaustMap((action) => 
-                this.postService.getPostsByUserId(action.userId).pipe(
-                    map((posts) => {
-                        return PostsActions.getPostsByUserIdSuccess({
-                            posts: posts
+                this.postService.updatePost(action.post.postId, action.post).pipe(
+                    map((post) => {
+                        return PostsActions.updatePostSuccess({
+                            post: post
                         });
                     }),
                     catchError((error) => {
-                        return of(PostsActions.getPostsByUserIdFailure({ payload: error }));
+                        return of(PostsActions.updatePostFailure({ payload: error }))
+                    }),
+                    finalize(async () => {
+                        await this.sharedService.managementToast(
+                            'postFeedback',
+                            this.responseOK,
+                            this.errorResponse
+                        );
+
+                        if (this.responseOK) {
+                            this.router.navigateByUrl('posts');
+                        }
                     })
                 )
             )
         )
     );
 
-    getPostsByUserIdFailure$ = createEffect(
+    editPostSuccess$ = createEffect(
+        () =>
+            this.actions$.pipe(
+                ofType(PostsActions.updatePostSuccess),
+                map(() => {
+                    this.responseOK = true;
+                })
+            ),
+        { dispatch: false }
+    );
+
+    editPostFailure$ = createEffect(
+        () => 
+            this.actions$.pipe(
+                ofType(PostsActions.updatePostFailure),
+                map((error) => {
+                    this.errorResponse = error.payload.error;
+                    this.sharedService.errorLog(error.payload.error);
+                })
+            ),
+        { dispatch: false }
+    );
+
+    createPost$ = createEffect(
         () =>
         this.actions$.pipe(
-            ofType(PostsActions.getPostsByUserIdFailure),
-            map((error) => {
-                this.errorResponse = error.payload.error;
-                this.sharedService.errorLog(error.payload.error);
-            })
-        ),
+            ofType(PostsActions.createPost),
+            exhaustMap((action) => 
+                this.postService.createPost(action.post).pipe(
+                    map((post) => {
+                        return PostsActions.createPostSuccess({
+                            post: post
+                        });
+                    }),
+                    catchError((error) => {
+                        return of(PostsActions.createPostFailure({ payload: error }))
+                    }),
+                    finalize(async () => {
+                        await this.sharedService.managementToast(
+                            'postFeedback',
+                            this.responseOK,
+                            this.errorResponse
+                        );
+
+                        if (this.responseOK) {
+                            this.router.navigateByUrl('posts');
+                        }
+                    })
+                )
+            )
+        )
+    );
+
+    createPostSuccess$ = createEffect(
+        () =>
+            this.actions$.pipe(
+                ofType(PostsActions.createPostSuccess),
+                map(() => {
+                    this.responseOK = true;
+                })
+            ),
+        { dispatch: false }
+    );
+
+    createPostFailure$ = createEffect(
+        () => 
+            this.actions$.pipe(
+                ofType(PostsActions.createPostFailure),
+                map((error) => {
+                    this.errorResponse = error.payload.error;
+                    this.sharedService.errorLog(error.payload.error);
+                })
+            ),
         { dispatch: false }
     );
 
