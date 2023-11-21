@@ -20,7 +20,8 @@ export class PostsEffects {
         //this.responseOK = false;
     }
 
-    getPosts$ = createEffect(() =>
+    getPosts$ = createEffect(
+        () =>
         this.actions$.pipe(
             ofType(PostsActions.getPosts),
             exhaustMap(() =>
@@ -78,7 +79,8 @@ export class PostsEffects {
         { dispatch: false }
     );
 
-    dislike$ = createEffect(() =>
+    dislike$ = createEffect(
+        () =>
         this.actions$.pipe(
             ofType(PostsActions.dislike),
             exhaustMap((action) =>
@@ -106,7 +108,8 @@ export class PostsEffects {
         { dispatch: false }
     );
 
-    getPostsByUserId$ = createEffect(() => 
+    getPostsByUserId$ = createEffect(
+        () => 
         this.actions$.pipe(
             ofType(PostsActions.getPostsByUserId),
             exhaustMap((action) => 
@@ -128,6 +131,37 @@ export class PostsEffects {
         () =>
         this.actions$.pipe(
             ofType(PostsActions.getPostsByUserIdFailure),
+            map((error) => {
+                this.errorResponse = error.payload.error;
+                this.sharedService.errorLog(error.payload.error);
+            })
+        ),
+        { dispatch: false }
+    );
+
+    deletePost$ = createEffect(
+        () =>
+        this.actions$.pipe(
+            ofType(PostsActions.deletePost),
+            exhaustMap((action) => 
+                this.postService.deletePost(action.postId).pipe(
+                    map(() => {
+                        return PostsActions.deletePostSuccess({ 
+                            postId: action.postId 
+                        });
+                    }),
+                    catchError((error) => {
+                        return of(PostsActions.deletePostFailure({ payload: error }));
+                    })
+                )
+            )
+        )
+    );
+
+    deletePostFailure$ = createEffect(
+        () =>
+        this.actions$.pipe(
+            ofType(PostsActions.deletePostFailure),
             map((error) => {
                 this.errorResponse = error.payload.error;
                 this.sharedService.errorLog(error.payload.error);

@@ -51,27 +51,12 @@ export class PostsListComponent {
   }
 
   deletePost(postId: string): void {
-    //let errorResponse: any;
-
     // show confirmation popup
     let result = confirm('Confirm delete post with id: ' + postId + ' .');
     if (result) {
       this.store.dispatch(
         PostsActions.deletePost({ postId: postId })
       );
-
-      /* this.postService.deletePost(postId)
-      .subscribe(
-        (rowsAffected) => {
-          if (rowsAffected.affected > 0) {
-            this.loadPosts();
-          }
-        },
-        (error) => {
-          errorResponse = error.error;
-          this.sharedService.errorLog(errorResponse);
-        }
-      ); */
     }
   }
 }

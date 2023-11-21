@@ -41,25 +41,15 @@ export class PostFormComponent implements OnInit {
 
   constructor(
     private activatedRoute: ActivatedRoute,
-    /* private postService: PostService, */
     private formBuilder: UntypedFormBuilder,
     private router: Router,
     private store: Store<AppState>
-    /* private sharedService: SharedService, */
-    /* private localStorageService: LocalStorageService, */
-    /* private categoryService: CategoryService */
   ) {
     this.isValidForm = null;
     this.postId = this.activatedRoute.snapshot.paramMap.get('id');
     this.post = new PostDTO('', '', 0, 0, new Date());
     this.isUpdateMode = false;
 
-    this.userId = '';
-    this.store.select('auth').subscribe((auth) => {
-      if(auth.credentials.user_id) {
-        this.userId = auth.credentials.user_id;
-      }
-    });
     /* this.validRequest = false; */
 
     this.title = new UntypedFormControl(this.post.title, [
@@ -82,8 +72,17 @@ export class PostFormComponent implements OnInit {
 
     this.categories = new UntypedFormControl([]);
 
+    this.userId = '';
+    this.store.select('auth').subscribe((auth) => {
+      if(auth.credentials.user_id) {
+        this.userId = auth.credentials.user_id;
+      }
+    });
+
+    this.categoriesList = [];
+
     // get categories by user and load multi select
-    this.loadCategories();
+    /* this.loadCategories(); */
 
     this.postForm = this.formBuilder.group({
       title: this.title,
@@ -95,14 +94,14 @@ export class PostFormComponent implements OnInit {
     });
   }
 
-  private loadCategories(): void {
+  /* private loadCategories(): void { */
     /* let errorResponse: any;
     const userId = this.localStorageService.get('user_id'); */
-    if (this.userId) {
+    /* if (this.userId) { */
     //if (userId) {
-      this.store.dispatch(
+      /* this.store.dispatch(
         getCategoriesByUserId({ userId: this.userId })
-      );
+      ); */
       /* this.categoryService.getCategoriesByUserId(userId).subscribe(
         (categoriesResult) => {
           this.categoriesList = categoriesResult;
@@ -112,12 +111,22 @@ export class PostFormComponent implements OnInit {
           this.sharedService.errorLog(errorResponse);
         }
       ); */
-    }
-  }
+    /* }
+  } */
 
   ngOnInit(): void {
     //let errorResponse: any;
     // update
+    if (this.userId) {
+      this.store.dispatch(
+        getCategoriesByUserId({ userId: this.userId })
+      );
+    }
+
+    this.store.select('categories').subscribe((categories) => {
+      this.categoriesList = categories.categories;
+    });
+
     if (this.postId) {
       this.isUpdateMode = true;
 
@@ -262,3 +271,4 @@ export class PostFormComponent implements OnInit {
     }
   }
 }
+// TENGO QUE ESCUCHAR EL POST
