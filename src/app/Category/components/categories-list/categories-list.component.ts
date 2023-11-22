@@ -28,22 +28,16 @@ export class CategoriesListComponent {
     });
 
     this.loadCategories();
+
+    this.store.select('categories').subscribe((categories) => {
+      this.categories = categories.categories;
+    });
   }
 
   private loadCategories(): void {
     let errorResponse: any;
-    /* const userId = this.localStorageService.get('user_id'); */
     if (this.userId) {
       this.store.dispatch(CategoriesActions.getCategoriesByUserId({ userId: this.userId }));
-      /* this.categoryService.getCategoriesByUserId(userId).subscribe(
-        (categoriesResult) => {
-          this.categories = categoriesResult;
-        },
-        (error) => {
-          errorResponse = error.error;
-          this.sharedService.errorLog(errorResponse);
-        }
-      ); */
     }
   }
 
@@ -56,24 +50,14 @@ export class CategoriesListComponent {
   }
 
   deleteCategory(categoryId: string): void {
-    let errorResponse: any;
 
     // show confirmation popup
     let result = confirm(
       'Confirm delete category with id: ' + categoryId + ' .'
     );
     if (result) {
-      this.categoryService.deleteCategory(categoryId)
-      .subscribe(
-        (rowsAffected) => {
-          if (rowsAffected.affected > 0) {
-            this.loadCategories();
-          }
-        },
-        (error) => {
-          errorResponse = error.error;
-          this.sharedService.errorLog(errorResponse);
-        }
+      this.store.dispatch(
+        CategoriesActions.deleteCategory({ categoryId: categoryId })
       );
     }
   }

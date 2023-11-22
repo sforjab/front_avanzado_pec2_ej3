@@ -7,22 +7,31 @@ import {
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { LocalStorageService } from './local-storage.service';
+import { AppState } from 'src/app/app.reducer';
+import { Store } from '@ngrx/store';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthInterceptorService implements HttpInterceptor {
-  access_token: string | null;
+  access_token!: string | null;
 
-  constructor(private localStorageService: LocalStorageService) {
-    this.access_token = this.localStorageService.get('access_token');
+  constructor(private store: Store<AppState>) {
+    this.store.select('auth').subscribe((auth) => {
+      if(auth.credentials.access_token) {
+        this.access_token = auth.credentials.access_token;
+      }
+    });
   }
-
   intercept(
     req: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
-    this.access_token = this.localStorageService.get('access_token');
+    this.store.select('auth').subscribe((auth) => {
+      if(auth.credentials.access_token) {
+        this.access_token = auth.credentials.access_token;
+      }
+    });
     if (this.access_token) {
       req = req.clone({
         setHeaders: {

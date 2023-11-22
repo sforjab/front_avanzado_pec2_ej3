@@ -4,6 +4,7 @@ import { Store } from '@ngrx/store';
 import { HeaderMenus } from 'src/app/Shared/Models/header-menus.dto';
 import { HeaderMenusService } from 'src/app/Shared/Services/header-menus.service';
 import { logout } from '../../../Auth/actions';
+import { AppState } from 'src/app/app.reducer';
 
 @Component({
   selector: 'app-header',
@@ -17,7 +18,7 @@ export class HeaderComponent implements OnInit {
   constructor(
     private router: Router,
     private headerMenusService: HeaderMenusService,
-    private store: Store
+    private store: Store<AppState>
   ) {
     this.showAuthSection = false;
     this.showNoAuthSection = true;

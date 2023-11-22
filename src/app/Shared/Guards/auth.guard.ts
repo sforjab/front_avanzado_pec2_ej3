@@ -7,15 +7,17 @@ import {
   UrlTree,
 } from '@angular/router';
 import { Observable } from 'rxjs';
-import { LocalStorageService } from '../Services/local-storage.service';
+import { AppState } from 'src/app/app.reducer';
+import { Store } from '@ngrx/store';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthGuard implements CanActivate {
+  access_token!: string;
   constructor(
     private router: Router,
-    private localStorageService: LocalStorageService
+    private store: Store<AppState>
   ) {}
 
   canActivate(
@@ -26,8 +28,13 @@ export class AuthGuard implements CanActivate {
     | Promise<boolean | UrlTree>
     | boolean
     | UrlTree {
-    const access_token = this.localStorageService.get('access_token');
-    if (access_token) {
+    /* const access_token = this.localStorageService.get('access_token'); */
+    this.store.select('auth').subscribe((auth) => {
+      if(auth.credentials.access_token) {
+        this.access_token = auth.credentials.access_token;
+      }
+    });
+    if (this.access_token) {
       // logged in so return true
       return true;
     }

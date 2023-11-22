@@ -7,7 +7,6 @@ import {
   Validators,
 } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { finalize } from 'rxjs/operators';
 import { CategoryDTO } from 'src/app/Category/models/category.dto';
 import { PostDTO } from 'src/app/Post/models/post.dto';
 import { AppState } from 'src/app/app.reducer';
@@ -34,7 +33,6 @@ export class PostFormComponent implements OnInit {
   isValidForm: boolean | null;
 
   private isUpdateMode: boolean;
-  /* private validRequest: boolean; */
   private postId: string | null;
 
   categoriesList!: CategoryDTO[];
@@ -50,8 +48,6 @@ export class PostFormComponent implements OnInit {
     this.post = new PostDTO('', '', 0, 0, new Date());
     this.categoriesList = [];
     this.isUpdateMode = false;
-
-    /* this.validRequest = false; */
 
     this.title = new UntypedFormControl(this.post.title, [
       Validators.required,
@@ -88,30 +84,30 @@ export class PostFormComponent implements OnInit {
       this.post = post.post;
       this.title.setValue(this.post.title);
 
-          this.description.setValue(this.post.description);
+      this.description.setValue(this.post.description);
 
-          this.publication_date.setValue(
-            formatDate(this.post.publication_date, 'yyyy-MM-dd', 'en')
-          );
+      this.publication_date.setValue(
+        formatDate(this.post.publication_date, 'yyyy-MM-dd', 'en')
+      );
 
-          let categoriesIds: string[] = [];
-          this.post.categories.forEach((cat: CategoryDTO) => {
-            categoriesIds.push(cat.categoryId);
-          });
+      let categoriesIds: string[] = [];
+      this.post.categories.forEach((cat: CategoryDTO) => {
+        categoriesIds.push(cat.categoryId);
+      });
 
-          this.categories.setValue(categoriesIds);
+      this.categories.setValue(categoriesIds);
 
-          this.num_likes.setValue(this.post.num_likes);
-          this.num_dislikes.setValue(this.post.num_dislikes);
+      this.num_likes.setValue(this.post.num_likes);
+      this.num_dislikes.setValue(this.post.num_dislikes);
 
-          this.postForm = this.formBuilder.group({
-            title: this.title,
-            description: this.description,
-            publication_date: this.publication_date,
-            categories: this.categories,
-            num_likes: this.num_likes,
-            num_dislikes: this.num_dislikes,
-          });
+      this.postForm = this.formBuilder.group({
+        title: this.title,
+        description: this.description,
+        publication_date: this.publication_date,
+        categories: this.categories,
+        num_likes: this.num_likes,
+        num_dislikes: this.num_dislikes,
+      });
     });
 
     this.postForm = this.formBuilder.group({
@@ -123,26 +119,6 @@ export class PostFormComponent implements OnInit {
       num_dislikes: this.num_dislikes,
     });
   }
-
-  /* private loadCategories(): void { */
-    /* let errorResponse: any;
-    const userId = this.localStorageService.get('user_id'); */
-    /* if (this.userId) { */
-    //if (userId) {
-      /* this.store.dispatch(
-        getCategoriesByUserId({ userId: this.userId })
-      ); */
-      /* this.categoryService.getCategoriesByUserId(userId).subscribe(
-        (categoriesResult) => {
-          this.categoriesList = categoriesResult;
-        },
-        (error) => {
-          errorResponse = error.error;
-          this.sharedService.errorLog(errorResponse);
-        }
-      ); */
-    /* }
-  } */
 
   ngOnInit(): void {
     // update

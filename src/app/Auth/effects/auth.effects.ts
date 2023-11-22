@@ -3,10 +3,12 @@ import { Actions, createEffect, ofType } from "@ngrx/effects";
 import { AuthService } from "../services/auth.service";
 import { Router } from "@angular/router";
 import { SharedService } from "src/app/Shared/Services/shared.service";
+import { HeaderMenusService } from "src/app/Shared/Services/header-menus.service";
 import { catchError, exhaustMap, finalize, map } from "rxjs/operators";
 import { AuthDTO } from "../models/auth.dto";
 import { of } from "rxjs";
 import * as AuthActions from '../actions';
+import { HeaderMenus } from "src/app/Shared/Models/header-menus.dto";
 
 
 @Injectable()
@@ -18,7 +20,8 @@ export class AuthEffects {
         private actions$: Actions,
         private authService: AuthService,
         private router: Router,
-        private sharedService: SharedService
+        private sharedService: SharedService,
+        private headerMenusService: HeaderMenusService
     ) {
         this.responseOK = false;
     }
@@ -49,6 +52,12 @@ export class AuthEffects {
                         );
 
                         if (this.responseOK) {
+                            const headerInfo: HeaderMenus = {
+                                showAuthSection: true,
+                                showNoAuthSection: false,
+                              };
+                              // update options menu
+                            this.headerMenusService.headerManagement.next(headerInfo);
                             this.router.navigateByUrl('home');
                         }
                     })
@@ -75,6 +84,11 @@ export class AuthEffects {
                 map((error) => {
                     this.responseOK = false;
                     this.errorResponse = error.payload.error;
+                    const headerInfo: HeaderMenus = {
+                        showAuthSection: false,
+                        showNoAuthSection: true,
+                    };
+                    this.headerMenusService.headerManagement.next(headerInfo);
                     this.sharedService.errorLog(error.payload.error);
                 })
             ),

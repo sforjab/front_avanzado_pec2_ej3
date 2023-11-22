@@ -1,1 +1,1 @@
-export * from './category.effects';
+export * as CategoriesEffects from './category.effects';

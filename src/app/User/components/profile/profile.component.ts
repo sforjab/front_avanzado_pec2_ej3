@@ -11,6 +11,8 @@ import { UserDTO } from 'src/app/User/models/user.dto';
 import { LocalStorageService } from 'src/app/Shared/Services/local-storage.service';
 import { SharedService } from 'src/app/Shared/Services/shared.service';
 import { UserService } from 'src/app/User/services/user.service';
+import { AppState } from 'src/app/app.reducer';
+import { Store } from '@ngrx/store';
 
 @Component({
   selector: 'app-profile',
@@ -19,7 +21,7 @@ import { UserService } from 'src/app/User/services/user.service';
 })
 export class ProfileComponent implements OnInit {
   profileUser: UserDTO;
-
+  userId: string;
   name: UntypedFormControl;
   surname_1: UntypedFormControl;
   surname_2: UntypedFormControl;
@@ -33,9 +35,7 @@ export class ProfileComponent implements OnInit {
 
   constructor(
     private formBuilder: UntypedFormBuilder,
-    private userService: UserService,
-    private sharedService: SharedService,
-    private localStorageService: LocalStorageService
+    private store: Store<AppState>
   ) {
     this.profileUser = new UserDTO('', '', '', '', new Date(), '', '');
 
@@ -79,6 +79,13 @@ export class ProfileComponent implements OnInit {
       Validators.minLength(8),
     ]);
 
+    this.userId = '';
+    this.store.select('auth').subscribe((auth) => {
+      if(auth.credentials.user_id) {
+        this.userId = auth.credentials.user_id;
+      }
+    });
+
     this.profileForm = this.formBuilder.group({
       name: this.name,
       surname_1: this.surname_1,
@@ -91,11 +98,12 @@ export class ProfileComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    let errorResponse: any;
 
     // load user data
-    const userId = this.localStorageService.get('user_id');
-    if (userId) {
+   /*  if (this.userId) {
+      this.store.dispatch(
+        
+      );
       this.userService.getUSerById(userId).subscribe(
         (userData) => {
           this.name.setValue(userData.name);
@@ -122,11 +130,11 @@ export class ProfileComponent implements OnInit {
           this.sharedService.errorLog(errorResponse);
         }
       );
-    }
+    } */
   }
 
   updateUser(): void {
-    let responseOK: boolean = false;
+   /*  let responseOK: boolean = false;
     this.isValidForm = false;
     let errorResponse: any;
 
@@ -161,6 +169,6 @@ export class ProfileComponent implements OnInit {
           this.sharedService.errorLog(errorResponse);
         }
       );
-    }
-  }
+    }*/
+  } 
 }

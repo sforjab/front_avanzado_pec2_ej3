@@ -16,7 +16,6 @@ import * as AuthActions from '../actions';
   styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent implements OnInit {
-  //loginUser: AuthDTO;
   email: UntypedFormControl;
   password: UntypedFormControl;
   loginForm: UntypedFormGroup;
@@ -25,7 +24,6 @@ export class LoginComponent implements OnInit {
     private formBuilder: UntypedFormBuilder,
     private store: Store<AuthState>
   ) {
-    //this.loginUser = new AuthDTO('', '', '', '');
 
     this.email = new UntypedFormControl('', [
       Validators.required,
@@ -55,57 +53,5 @@ export class LoginComponent implements OnInit {
     };
 
     this.store.dispatch(AuthActions.login({ credentials }));
-
-
-    /* let responseOK: boolean = false;
-    let errorResponse: any;
-
-    this.loginUser.email = this.email.value;
-    this.loginUser.password = this.password.value;
-
-    this.authService.login(this.loginUser)
-    .pipe( 
-      finalize(async () => { // Queremos que esta lógica se ejecute siempre tras la lógica del subscribe
-        await this.sharedService.managementToast(
-          'loginFeedback',
-          responseOK,
-          errorResponse
-        );
-
-        if(responseOK) {
-          const headerInfo: HeaderMenus = {
-            showAuthSection: true,
-            showNoAuthSection: false,
-          };
-          // update options menu
-          this.headerMenusService.headerManagement.next(headerInfo);
-          this.router.navigateByUrl('home');
-        }
-      })
-    )
-    .subscribe(
-      (authToken) => {
-        // Respuesta exitosa
-        responseOK = true;
-        this.loginUser.user_id = authToken.user_id;
-        this.loginUser.access_token = authToken.access_token;
-        // save token to localstorage for next requests
-        this.localStorageService.set('user_id', this.loginUser.user_id);
-        this.localStorageService.set('access_token', this.loginUser.access_token);
-      },
-      (error) => {
-        // Manejo de errores
-        responseOK = false;
-        errorResponse = error.error;
-
-        const headerInfo: HeaderMenus = {
-          showAuthSection: false,
-          showNoAuthSection: true,
-        };
-
-        this.headerMenusService.headerManagement.next(headerInfo);
-        this.sharedService.errorLog(error.error);
-      }
-    ); */
   }
 }

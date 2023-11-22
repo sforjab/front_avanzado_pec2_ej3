@@ -20,7 +20,7 @@ import { AuthInterceptorService } from "./Services/auth-interceptor.service";
         FooterComponent,
         FormatDatePipe
     ],
-    providers: [ /* MIRAR LO DEL AUTHSERVICE, QUIZÁS EN SHARED */
+    providers: [
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptorService,

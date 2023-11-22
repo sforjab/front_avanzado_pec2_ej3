@@ -1,10 +1,7 @@
-import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgModule } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { AuthInterceptorService } from './Shared/Services/auth-interceptor.service';
 import { AuthModule } from './Auth/auth.module';
 import { CategoryModule } from './Category/category.module';
 import { PostModule } from './Post/post.module';
@@ -23,8 +20,6 @@ import { environment } from 'src/environments/environment';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    /* ReactiveFormsModule,
-    HttpClientModule, */
     AuthModule,
     CategoryModule,
     PostModule,
