@@ -113,8 +113,6 @@ export class PostFormComponent implements OnInit {
             num_dislikes: this.num_dislikes,
           });
     });
-    // get categories by user and load multi select
-    /* this.loadCategories(); */
 
     this.postForm = this.formBuilder.group({
       title: this.title,

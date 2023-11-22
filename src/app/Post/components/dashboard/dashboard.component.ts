@@ -32,26 +32,5 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.store.dispatch(PostsActions.getPosts());
-    /* this.loadPosts(); */
   }
-
- /*  private loadPosts(): void { */
-    /* let errorResponse: any; */
-
-    /* this.postService.getPosts().subscribe(
-      (postsResult) => {
-        this.posts = postsResult;
-
-        // Añadimos aquí la lógica existente en el ngOnInit, para que numLikes y numDislikes se actualicen correctamente
-        this.posts.forEach((post) => {
-          this.numLikes = this.numLikes + post.num_likes;
-          this.numDislikes = this.numDislikes + post.num_dislikes;
-        });
-      },
-      (error) => {
-        errorResponse = error.error;
-        this.sharedService.errorLog(errorResponse);
-      }
-    ); */
-  /* } */
 }
