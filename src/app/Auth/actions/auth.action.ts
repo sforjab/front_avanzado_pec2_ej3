@@ -2,6 +2,7 @@ import { createAction, props } from "@ngrx/store";
 import { AuthDTO } from "../models/auth.dto";
 import { HttpErrorResponse } from "@angular/common/http";
 
+// Login
 export const login = createAction(
     '[Login Page] Login',
     props<{ credentials: AuthDTO }>()
@@ -17,6 +18,7 @@ export const loginFailure = createAction(
     props<{ payload: HttpErrorResponse }>()
 );
 
+// Logout
 export const logout = createAction(
     '[Login Page] Logout'
 );

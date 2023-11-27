@@ -121,7 +121,7 @@ export class PostsEffects {
             exhaustMap((action) =>
                 this.postService.likePost(action.postId).pipe(
                     map(() => {
-                        return PostsActions.likeSuccess();
+                        return PostsActions.getPosts();
                     }),
                     catchError((error) => {
                         return of(PostsActions.likeFailure({ payload: error }));
@@ -150,7 +150,7 @@ export class PostsEffects {
             exhaustMap((action) =>
                 this.postService.dislikePost(action.postId).pipe(
                     map(() => {
-                        return PostsActions.dislikeSuccess();
+                        return PostsActions.getPosts();
                     }),
                     catchError((error) => {
                         return of(PostsActions.dislikeFailure({ payload: error }));
@@ -177,7 +177,7 @@ export class PostsEffects {
         this.actions$.pipe(
             ofType(PostsActions.updatePost),
             exhaustMap((action) => 
-                this.postService.updatePost(action.post.postId, action.post).pipe(
+                this.postService.updatePost(action.postId, action.post).pipe(
                     map((post) => {
                         return PostsActions.updatePostSuccess({
                             post: post

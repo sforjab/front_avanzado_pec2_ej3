@@ -1,4 +1,1 @@
-/* import * as UserEffects from './user.effects';
-
-export { UserEffects };
- */
+export * from './user.effects';

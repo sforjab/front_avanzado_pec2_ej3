@@ -2,7 +2,7 @@ import { createAction, props } from "@ngrx/store";
 import { UserDTO } from "../models/user.dto";
 import { HttpErrorResponse } from "@angular/common/http";
 
-// Action para obtener un usuario por ID
+// Obtener un usuario por ID
 export const getUserById = createAction(
     '[Profile Page] Get User By ID',
     props<{ userId: string }>()
@@ -18,14 +18,15 @@ export const getUserByIdFailure = createAction(
     props<{ payload: HttpErrorResponse }>()
 );
 
-// Action para actualizar un usuario
+// Actualizar un usuario
 export const updateUser = createAction(
     '[Profile Page] Update User',
     props<{ userId: string, user: UserDTO }>()
 );
 
 export const updateUserSuccess = createAction(
-    '[Profile Page] Update User Success'
+    '[Profile Page] Update User Success',
+    props<{ userData: UserDTO }>()
 );
 
 export const updateUserFailure = createAction(
@@ -33,14 +34,15 @@ export const updateUserFailure = createAction(
     props<{ payload: HttpErrorResponse }>()
 );
 
-// Action para registrar un usuario
+// Registrar un nuevo usuario
 export const register = createAction(
     '[Register Page] Register',
     props<{ user: UserDTO }>()
 );
 
 export const registerSuccess = createAction(
-    '[Register Page] Register Success'
+    '[Register Page] Register Success',
+    props<{ userData: UserDTO }>()
 );
 
 export const registerFailure = createAction(

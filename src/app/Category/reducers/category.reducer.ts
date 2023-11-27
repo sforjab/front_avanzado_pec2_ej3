@@ -1,5 +1,4 @@
 import { Action, createReducer, on } from "@ngrx/store";
-
 import { CategoryDTO } from "../models/category.dto";
 import * as CategoriesActions from "../actions";
 
@@ -29,7 +28,7 @@ const _categoriesReducer = createReducer(
     })),
     on(CategoriesActions.getCategoriesByUserIdSuccess, (state, { categories }) => ({
         ...state,
-        categories,
+        categories: categories,
         loading: false,
         loaded: true,
         error: null

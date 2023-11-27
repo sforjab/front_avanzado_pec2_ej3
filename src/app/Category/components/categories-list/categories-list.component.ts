@@ -19,7 +19,7 @@ export class CategoriesListComponent {
     private store: Store<AppState>
   ) {
     this.userId = '';
-    this.categories = [];
+    this.categories = new Array<CategoryDTO>();
 
     this.store.select('auth').subscribe((auth) => {
       if(auth.credentials.user_id) {
@@ -27,17 +27,18 @@ export class CategoriesListComponent {
       }
     });
 
-    this.loadCategories();
-
     this.store.select('categories').subscribe((categories) => {
       this.categories = categories.categories;
     });
+
+    this.loadCategories();
   }
 
   private loadCategories(): void {
-    let errorResponse: any;
     if (this.userId) {
-      this.store.dispatch(CategoriesActions.getCategoriesByUserId({ userId: this.userId }));
+      this.store.dispatch(
+        CategoriesActions.getCategoriesByUserId({ userId: this.userId })
+      );
     }
   }
 

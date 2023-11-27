@@ -40,13 +40,12 @@ export class PostFormComponent implements OnInit {
   constructor(
     private activatedRoute: ActivatedRoute,
     private formBuilder: UntypedFormBuilder,
-    private router: Router,
     private store: Store<AppState>
   ) {
     this.isValidForm = null;
     this.postId = this.activatedRoute.snapshot.paramMap.get('id');
     this.post = new PostDTO('', '', 0, 0, new Date());
-    this.categoriesList = [];
+    this.categoriesList = new Array<CategoryDTO>();
     this.isUpdateMode = false;
 
     this.title = new UntypedFormControl(this.post.title, [
@@ -80,36 +79,6 @@ export class PostFormComponent implements OnInit {
       this.categoriesList = categories.categories;
     });
 
-    this.store.select('posts').subscribe((post) => { // MIRAR SI ESTO ES REDUNDANTE (LA LÓGICA)
-      this.post = post.post;
-      this.title.setValue(this.post.title);
-
-      this.description.setValue(this.post.description);
-
-      this.publication_date.setValue(
-        formatDate(this.post.publication_date, 'yyyy-MM-dd', 'en')
-      );
-
-      let categoriesIds: string[] = [];
-      this.post.categories.forEach((cat: CategoryDTO) => {
-        categoriesIds.push(cat.categoryId);
-      });
-
-      this.categories.setValue(categoriesIds);
-
-      this.num_likes.setValue(this.post.num_likes);
-      this.num_dislikes.setValue(this.post.num_dislikes);
-
-      this.postForm = this.formBuilder.group({
-        title: this.title,
-        description: this.description,
-        publication_date: this.publication_date,
-        categories: this.categories,
-        num_likes: this.num_likes,
-        num_dislikes: this.num_dislikes,
-      });
-    });
-
     this.postForm = this.formBuilder.group({
       title: this.title,
       description: this.description,
@@ -124,7 +93,7 @@ export class PostFormComponent implements OnInit {
     // update
     if (this.userId) {
       this.store.dispatch(
-        getCategoriesByUserId({ userId: this.userId }) // HACER EFFECT
+        getCategoriesByUserId({ userId: this.userId })
       );
     }
 
@@ -134,12 +103,49 @@ export class PostFormComponent implements OnInit {
       this.store.dispatch(
         PostsActions.getPostById({ postId: this.postId })
       );
+    
+      this.store.select('posts').subscribe((post) => {
+        if(post.loaded) {
+          this.post = post.post;
+
+          if (this.isUpdateMode) { 
+            this.title.setValue(this.post.title);
+    
+            this.description.setValue(this.post.description);
+      
+            this.publication_date.setValue(
+              formatDate(this.post.publication_date, 'yyyy-MM-dd', 'en')
+            );
+      
+            let categoriesIds: string[] = [];
+            this.post.categories.forEach((cat: CategoryDTO) => {
+              categoriesIds.push(cat.categoryId);
+            });
+      
+            this.categories.setValue(categoriesIds);
+      
+            this.num_likes.setValue(this.post.num_likes);
+            this.num_dislikes.setValue(this.post.num_dislikes);
+    
+            this.postForm = this.formBuilder.group({
+              title: this.title,
+              description: this.description,
+              publication_date: this.publication_date,
+              categories: this.categories,
+              num_likes: this.num_likes,
+              num_dislikes: this.num_dislikes,
+            });
+          }
+        }
+      });
     }
   }
 
   private editPost(): void {
     if(this.postId) {
       if(this.userId) {
+        this.post.userId = this.userId;
+        
         this.store.dispatch(
           PostsActions.updatePost({ postId: this.postId, post: this.post })
         );

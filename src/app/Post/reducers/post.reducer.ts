@@ -44,11 +44,6 @@ const _postsReducer = createReducer(
         loading: true,
         error: null,
     })),
-    on(PostsActions.likeSuccess, (state) => ({
-        ...state,
-        loading: false,
-        error: null,
-    })),
     on(PostsActions.likeFailure, (state, { payload }) => ({
         ...state,
         loading: false,
@@ -57,11 +52,6 @@ const _postsReducer = createReducer(
     on(PostsActions.dislike, (state) => ({
         ...state,
         loading: true,
-        error: null,
-    })),
-    on(PostsActions.dislikeSuccess, (state) => ({
-        ...state,
-        loading: false,
         error: null,
     })),
     on(PostsActions.dislikeFailure, (state, { payload }) => ({
@@ -96,7 +86,7 @@ const _postsReducer = createReducer(
     })),
     on(PostsActions.createPostSuccess, (state, { post }) => ({
         ...state,
-        categories: [...state.posts, post],
+        posts: [...state.posts, post],
         loading: false,
         loaded: true,
         error: null
@@ -115,7 +105,7 @@ const _postsReducer = createReducer(
     })),
     on(PostsActions.updatePostSuccess, (state, { post }) => ({
             ...state,
-            categories: state.posts.map(p => p.postId === post.postId ? post : p),
+            posts: state.posts.map(p => p.postId === post.postId ? post : p),
             loading: false,
             loaded: true,
             error: null

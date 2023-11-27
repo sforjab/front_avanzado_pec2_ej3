@@ -2,7 +2,7 @@ import { createAction, props } from "@ngrx/store";
 import { PostDTO } from "../models/post.dto";
 import { HttpErrorResponse } from "@angular/common/http";
 
-// Obtener todas las publicaciones
+// Obtener todos los posts
 export const getPosts = createAction('[Home or Dashboard Page] Get Posts');
 
 export const getPostsSuccess = createAction(
@@ -15,33 +15,29 @@ export const getPostsFailure = createAction(
     props<{ payload: HttpErrorResponse }>()
 );
 
-// Dar "me gusta" a una publicación
+// Dar 'like' a un post
 export const like = createAction(
     '[Home Page] Like',
     props<{ postId: string }>()
 );
-  
-export const likeSuccess = createAction('[Home Page] Like Success');
 
 export const likeFailure = createAction(
     '[Home Page] Like Failure',
     props<{ payload: HttpErrorResponse }>()
 );
 
-// Dar "no me gusta" a una publicación
+// Dar 'dislike' a un post
 export const dislike = createAction(
     '[Home Page] Dislike',
     props<{ postId: string }>()
 );
-  
-export const dislikeSuccess = createAction('[Home Page] Dislike Success');
 
 export const dislikeFailure = createAction(
     '[Home Page] Dislike Failure',
     props<{ payload: HttpErrorResponse }>()
 );
 
-// Obtener una publicación por su ID
+// Obtener un post por su ID
 export const getPostById = createAction(
     '[Post Form Page] Get Post By ID',
     props<{ postId: string }>()
@@ -57,7 +53,7 @@ export const getPostByIdFailure = createAction(
     props<{ payload: HttpErrorResponse }>()
 );
 
-// Actualizar una publicación
+// Actualizar un post
 export const updatePost = createAction(
     '[Post Form Page] Update Post',
     props<{ postId: string, post: PostDTO }>()
@@ -73,7 +69,7 @@ export const updatePostFailure = createAction(
     props<{ payload: HttpErrorResponse }>()
 );
 
-// Crear una nueva publicación
+// Crear un nuevo post
 export const createPost = createAction(
     '[Post Form Page] Create Post',
     props<{ post: PostDTO }>()
@@ -89,7 +85,7 @@ export const createPostFailure = createAction(
     props<{ payload: HttpErrorResponse }>()
 );
 
-// Obtener publicaciones por ID de usuario
+// Obtener posts por ID de usuario
 export const getPostsByUserId = createAction(
     '[Posts List Page] Get Posts By User ID',
     props<{ userId: string }>()
@@ -105,7 +101,7 @@ export const getPostsByUserIdFailure = createAction(
     props<{ payload: HttpErrorResponse }>()
 );
 
-// Eliminar una publicación
+// Eliminar un post
 export const deletePost = createAction(
     '[Posts List Page] Delete Post',
     props<{ postId: string }>()

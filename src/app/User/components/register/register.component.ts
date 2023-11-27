@@ -7,12 +7,13 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
-import { finalize } from 'rxjs/operators';
-import { HeaderMenus } from 'src/app/Shared/Models/header-menus.dto';
 import { UserDTO } from 'src/app/User/models/user.dto';
 import { HeaderMenusService } from 'src/app/Shared/Services/header-menus.service';
 import { SharedService } from 'src/app/Shared/Services/shared.service';
 import { UserService } from 'src/app/User/services/user.service';
+import { AppState } from 'src/app/app.reducer';
+import { Store } from '@ngrx/store';
+import * as UserActions from '../../actions';
 
 @Component({
   selector: 'app-register',
@@ -35,10 +36,8 @@ export class RegisterComponent implements OnInit {
 
   constructor(
     private formBuilder: UntypedFormBuilder,
-    private userService: UserService,
-    private sharedService: SharedService,
-    private headerMenusService: HeaderMenusService,
-    private router: Router
+    private router: Router,
+    private store: Store<AppState>
   ) {
     this.registerUser = new UserDTO('', '', '', '', new Date(), '', '');
 
@@ -82,6 +81,17 @@ export class RegisterComponent implements OnInit {
       Validators.minLength(8),
     ]);
 
+    this.store.select('user').subscribe((user) => {
+      if (user.loaded) {
+        this.registerUser = user.user;
+
+        // Reset the form
+        this.registerForm.reset();
+        // After reset form we set birthDate to today again (is an example)
+        this.birth_date.setValue(formatDate(new Date(), 'yyyy-MM-dd', 'en'));
+      }
+    })
+
     this.registerForm = this.formBuilder.group({
       name: this.name,
       surname_1: this.surname_1,
@@ -96,9 +106,7 @@ export class RegisterComponent implements OnInit {
   ngOnInit(): void {}
 
   register(): void {
-    let responseOK: boolean = false;
     this.isValidForm = false;
-    let errorResponse: any;
 
     if (this.registerForm.invalid) {
       return;
@@ -107,40 +115,8 @@ export class RegisterComponent implements OnInit {
     this.isValidForm = true;
     this.registerUser = this.registerForm.value;
 
-    this.userService.register(this.registerUser)
-    .pipe(
-      finalize(async () => {
-        await this.sharedService.managementToast(
-          'registerFeedback',
-          responseOK,
-          errorResponse
-        );
-  
-        if (responseOK) {
-          // Reset the form
-          this.registerForm.reset();
-          // After reset form we set birthDate to today again (is an example)
-          this.birth_date.setValue(formatDate(new Date(), 'yyyy-MM-dd', 'en'));
-          this.router.navigateByUrl('home');
-        }
-      })
-    )
-    .subscribe(
-      () => {
-        responseOK = true;
-      },
-      (error) => {
-        responseOK = false;
-        errorResponse = error.error;
-
-        const headerInfo: HeaderMenus = {
-          showAuthSection: false,
-          showNoAuthSection: true,
-        };
-        this.headerMenusService.headerManagement.next(headerInfo);
-
-        this.sharedService.errorLog(errorResponse);
-      }
+    this.store.dispatch(
+      UserActions.register({ user: this.registerUser })
     );
   }
 }

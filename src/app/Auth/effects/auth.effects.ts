@@ -94,4 +94,19 @@ export class AuthEffects {
             ),
         { dispatch: false }
     );
+
+    logout$ = createEffect(() => 
+        this.actions$.pipe(
+            ofType(AuthActions.logout),
+            map(() => {
+                const headerInfo: HeaderMenus = {
+                    showAuthSection: false,
+                    showNoAuthSection: true,
+                  };
+              
+                  this.headerMenusService.headerManagement.next(headerInfo);
+            })
+        ),
+        { dispatch: false }
+    );
 }

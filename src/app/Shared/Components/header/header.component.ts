@@ -64,16 +64,6 @@ export class HeaderComponent implements OnInit {
   }
 
   logout(): void {
-    /* this.localStorageService.remove('user_id');
-    this.localStorageService.remove('access_token');
-
-    const headerInfo: HeaderMenus = {
-      showAuthSection: false,
-      showNoAuthSection: true,
-    };
-
-    this.headerMenusService.headerManagement.next(headerInfo); */
-
     this.store.dispatch(logout());
     this.router.navigateByUrl('home');
   }

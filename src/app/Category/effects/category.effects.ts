@@ -8,7 +8,7 @@ import * as CategoriesActions from '../actions';
 import { of } from "rxjs";
 
 @Injectable()
-export class PostsEffects {
+export class CategoriesEffects {
     private responseOK: boolean;
     private errorResponse: any;
 
@@ -88,7 +88,7 @@ export class PostsEffects {
         this.actions$.pipe(
             ofType(CategoriesActions.updateCategory),
             exhaustMap((action) => 
-                this.categoryService.updateCategory(action.category.categoryId, action.category).pipe(
+                this.categoryService.updateCategory(action.categoryId, action.category).pipe(
                     map((category) => {
                         return CategoriesActions.updateCategorySuccess({
                             category: category
@@ -128,6 +128,59 @@ export class PostsEffects {
         () => 
             this.actions$.pipe(
                 ofType(CategoriesActions.updateCategoryFailure),
+                map((error) => {
+                    this.errorResponse = error.payload.error;
+                    this.sharedService.errorLog(error.payload.error);
+                })
+            ),
+        { dispatch: false }
+    );
+
+    createCategory$ = createEffect(
+        () =>
+        this.actions$.pipe(
+            ofType(CategoriesActions.createCategory),
+            exhaustMap((action) => 
+                this.categoryService.createCategory(action.category).pipe(
+                    map((category) => {
+                        return CategoriesActions.createCategorySuccess({
+                            category: category
+                        });
+                    }),
+                    catchError((error) => {
+                        return of(CategoriesActions.createCategoryFailure({ payload: error }))
+                    }),
+                    finalize(async () => {
+                        await this.sharedService.managementToast(
+                            'categoryFeedback',
+                            this.responseOK,
+                            this.errorResponse
+                        );
+
+                        if (this.responseOK) {
+                            this.router.navigateByUrl('categories');
+                        }
+                    })
+                )
+            )
+        )
+    );
+
+    createCategorySuccess$ = createEffect(
+        () =>
+            this.actions$.pipe(
+                ofType(CategoriesActions.createCategorySuccess),
+                map(() => {
+                    this.responseOK = true;
+                })
+            ),
+        { dispatch: false }
+    );
+
+    createCategoryFailure$ = createEffect(
+        () => 
+            this.actions$.pipe(
+                ofType(CategoriesActions.createCategoryFailure),
                 map((error) => {
                     this.errorResponse = error.payload.error;
                     this.sharedService.errorLog(error.payload.error);

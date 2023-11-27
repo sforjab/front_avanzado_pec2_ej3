@@ -34,7 +34,7 @@ export const getCategoryByIdFailure = createAction(
     props<{ payload: HttpErrorResponse }>()
 );
 
-// Crear categoría
+// Crear una nueva categoría
 export const createCategory = createAction(
     '[Category Form Page] Create Category',
     props<{ category: CategoryDTO }>()
@@ -53,7 +53,7 @@ export const createCategoryFailure = createAction(
 // Actualizar categoría
 export const updateCategory = createAction(
     '[Category Form Page] Update Category',
-    props<{ category: CategoryDTO }>()
+    props<{ categoryId: string, category: CategoryDTO }>()
 );
 
 export const updateCategorySuccess = createAction(

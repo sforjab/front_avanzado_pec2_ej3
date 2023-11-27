@@ -6,13 +6,10 @@ import {
   UntypedFormGroup,
   Validators,
 } from '@angular/forms';
-import { finalize } from 'rxjs/operators';
 import { UserDTO } from 'src/app/User/models/user.dto';
-import { LocalStorageService } from 'src/app/Shared/Services/local-storage.service';
-import { SharedService } from 'src/app/Shared/Services/shared.service';
-import { UserService } from 'src/app/User/services/user.service';
 import { AppState } from 'src/app/app.reducer';
 import { Store } from '@ngrx/store';
+import * as UserActions from '../../actions';
 
 @Component({
   selector: 'app-profile',
@@ -86,6 +83,29 @@ export class ProfileComponent implements OnInit {
       }
     });
 
+    this.store.select('user').subscribe((user) => {
+      this.profileUser = user.user;
+
+      this.name.setValue(this.profileUser.name);
+      this.surname_1.setValue(this.profileUser.surname_1);
+      this.surname_2.setValue(this.profileUser.surname_2);
+      this.alias.setValue(this.profileUser.alias);
+      this.birth_date.setValue(
+        formatDate(this.profileUser.birth_date, 'yyyy-MM-dd', 'en')
+      );
+      this.email.setValue(this.profileUser.email);
+
+      this.profileForm = this.formBuilder.group({
+        name: this.name,
+        surname_1: this.surname_1,
+        surname_2: this.surname_2,
+        alias: this.alias,
+        birth_date: this.birth_date,
+        email: this.email,
+        password: this.password,
+      });
+    })
+
     this.profileForm = this.formBuilder.group({
       name: this.name,
       surname_1: this.surname_1,
@@ -100,43 +120,15 @@ export class ProfileComponent implements OnInit {
   ngOnInit(): void {
 
     // load user data
-   /*  if (this.userId) {
+    if (this.userId) {
       this.store.dispatch(
-        
+        UserActions.getUserById({ userId: this.userId })
       );
-      this.userService.getUSerById(userId).subscribe(
-        (userData) => {
-          this.name.setValue(userData.name);
-          this.surname_1.setValue(userData.surname_1);
-          this.surname_2.setValue(userData.surname_2);
-          this.alias.setValue(userData.alias);
-          this.birth_date.setValue(
-            formatDate(userData.birth_date, 'yyyy-MM-dd', 'en')
-          );
-          this.email.setValue(userData.email);
-
-          this.profileForm = this.formBuilder.group({
-            name: this.name,
-            surname_1: this.surname_1,
-            surname_2: this.surname_2,
-            alias: this.alias,
-            birth_date: this.birth_date,
-            email: this.email,
-            password: this.password,
-          });
-        },
-        (error) => {
-          errorResponse = error.error;
-          this.sharedService.errorLog(errorResponse);
-        }
-      );
-    } */
+    }
   }
 
   updateUser(): void {
-   /*  let responseOK: boolean = false;
     this.isValidForm = false;
-    let errorResponse: any;
 
     if (this.profileForm.invalid) {
       return;
@@ -145,30 +137,10 @@ export class ProfileComponent implements OnInit {
     this.isValidForm = true;
     this.profileUser = this.profileForm.value;
 
-    const userId = this.localStorageService.get('user_id');
-
-    if (userId) {
-      this.userService.updateUser(userId, this.profileUser)
-      .pipe(
-        finalize(async () => {
-          await this.sharedService.managementToast(
-            'profileFeedback',
-            responseOK,
-            errorResponse
-          );
-        })
-      )
-      .subscribe(
-        () => {
-          responseOK = true;
-        },
-        (error) => {
-          responseOK = false;
-          errorResponse = error.error;
-  
-          this.sharedService.errorLog(errorResponse);
-        }
+    if (this.userId) {
+      this.store.dispatch(
+        UserActions.updateUser({ userId: this.userId, user: this.profileUser })
       );
-    }*/
+    }
   } 
 }

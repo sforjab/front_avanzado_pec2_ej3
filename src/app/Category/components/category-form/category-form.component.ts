@@ -32,7 +32,6 @@ export class CategoryFormComponent implements OnInit {
   constructor(
     private activatedRoute: ActivatedRoute,
     private formBuilder: UntypedFormBuilder,
-    private router: Router,
     private store: Store<AppState>
   ) {
     this.isValidForm = null;
@@ -62,23 +61,25 @@ export class CategoryFormComponent implements OnInit {
       }
     });
 
-    this.store.select('categories').subscribe((category) => { // MIRAR SI ESTO ES REDUNDANTE (LA LÓGICA)
-      this.category = category.category;
+    this.store.select('categories').subscribe((category) => {
+      if(category.loaded) {
+        this.category = category.category;
 
-      this.title.setValue(this.category.title);
+        if (this.isUpdateMode) {
+          this.title.setValue(this.category.title);
 
-      this.description.setValue(this.category.description);
+          this.description.setValue(this.category.description);
 
-      this.css_color.setValue(this.category.css_color);
+          this.css_color.setValue(this.category.css_color);
 
-      this.categoryForm = this.formBuilder.group({
-        title: this.title,
-        description: this.description,
-        css_color: this.css_color,
-      });
+          this.categoryForm = this.formBuilder.group({
+            title: this.title,
+            description: this.description,
+            css_color: this.css_color,
+          });
+        }
+      }
     });
-
-
 
     this.categoryForm = this.formBuilder.group({
       title: this.title,
@@ -88,8 +89,6 @@ export class CategoryFormComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    let errorResponse: any;
-
     // update
     if (this.categoryId) {
       this.isUpdateMode = true;
@@ -99,14 +98,21 @@ export class CategoryFormComponent implements OnInit {
   }
 
   private editCategory(): void {
-    if(this.userId) {
-      this.store.dispatch(CategoriesActions.updateCategory({ category: this.category }));
+    if(this.categoryId) {
+      if(this.userId) {
+        this.category.userId = this.userId;
+        this.store.dispatch(CategoriesActions.updateCategory({ categoryId: this.categoryId, category: this.category }));
+      }
     }
   }
 
   private createCategory(): void {
     if(this.userId) {
-      this.store.dispatch(CategoriesActions.createCategory({ category: this.category }));
+      this.category.userId = this.userId;
+      
+      this.store.dispatch(
+        CategoriesActions.createCategory({ category: this.category })
+      );
     }
   }
 

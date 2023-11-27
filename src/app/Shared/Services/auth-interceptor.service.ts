@@ -6,7 +6,6 @@ import {
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { LocalStorageService } from './local-storage.service';
 import { AppState } from 'src/app/app.reducer';
 import { Store } from '@ngrx/store';
 

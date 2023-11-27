@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { HeaderMenus } from 'src/app/Shared/Models/header-menus.dto';
 import { PostDTO } from 'src/app/Post/models/post.dto';
 import { AppState } from 'src/app/app.reducer';
 import { Store } from '@ngrx/store';
@@ -31,14 +30,6 @@ export class HomeComponent {
   }
 
   ngOnInit(): void {
-    // ESTO HAY QUE VER QUÉ HACER PORQUE NO SÉ DÓNDE VA
-    /* this.headerMenusService.headerManagement.subscribe(
-      (headerInfo: HeaderMenus) => {
-        if (headerInfo) {
-          this.showButtons = headerInfo.showAuthSection;
-        }
-      }
-    ); */
     if(this.userId) {
       this.showButtons = true;
     }

@@ -28,7 +28,6 @@ export class AuthGuard implements CanActivate {
     | Promise<boolean | UrlTree>
     | boolean
     | UrlTree {
-    /* const access_token = this.localStorageService.get('access_token'); */
     this.store.select('auth').subscribe((auth) => {
       if(auth.credentials.access_token) {
         this.access_token = auth.credentials.access_token;
